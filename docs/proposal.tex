@@ -1,0 +1,162 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage{fontspec}
+\usepackage[margin=2cm]{geometry}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage[table]{xcolor}
+\usepackage{titlesec}
+\usepackage[hidelinks]{hyperref}
+
+\setlist{nosep, leftmargin=*}
+\titlespacing*{\section}{0pt}{1.0ex}{0.5ex}
+\titlespacing*{\subsection}{0pt}{0.8ex}{0.3ex}
+\titleformat{\section}{\large\bfseries}{\thesection}{0.6em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{}{0em}{}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.4ex}
+\pagestyle{plain}
+
+% Visible placeholder for anything the group still has to fill in.
+\newcommand{\todo}[1]{\textcolor{red}{[TBD: #1]}}
+\newcommand{\appname}{SUnite}
+
+\begin{document}
+
+\begin{center}
+  {\large\bfseries Sabancı University}\\[0.6ex]
+  {\large\bfseries CS310 -- Mobile Application Development}\\[0.6ex]
+  {\large\bfseries 2026-2027 Fall Project Step 1 Proposal}\\[2.5ex]
+  {\LARGE\bfseries \appname{}} \textcolor{red}{\small(working title)}\\[0.4ex]
+  Find your group at Sabancı\\[2ex]
+  {\bfseries Group 32}\\[1.5ex]
+  Azra At \quad 34090\\
+  Ece Ulutaş \quad \todo{ID}\\
+  Elif Çamlıkaya \quad 35191\\
+  Mert Ali İlter \quad 34447\\[1.5ex]
+  GitHub: \url{https://github.com/ssinix/sunite}
+\end{center}
+
+\section{App Overview}
+
+\textbf{What the app does:} \appname{} is a mobile app, exclusive to Sabancı
+University students, for finding and forming groups of any kind. It is
+organised as a set of category boards on which students can post and browse
+listings of two kinds: \emph{existing groups looking for new members}, and
+\emph{students looking for a group to join}. Boards cover course groups,
+Erasmus, startups/projects and campus events.
+
+\textbf{Problem it addresses:} Finding the right people at SU is currently
+scattered across WhatsApp groups, SUCourse forums and word of
+mouth. A student who needs a project partner for a course, wants to meet others
+going to the same Erasmus school, is looking for co-founders with a specific
+skill, or simply does not want to go to a club event alone has no single place
+to look. \appname{} gathers all of these requests in one place and makes them
+searchable by course, school, skill and event.
+
+\textbf{Intended users:} Sabancı University undergraduate and graduate
+students, verified through their \texttt{@sabanciuniv.edu} e-mail address.
+Clubs and student initiatives benefit indirectly, since students can organise
+groups around their events.
+
+\section{Core Features}
+
+\begin{enumerate}
+  \item \textbf{SU-only authentication:} sign up and log in with a
+        university e-mail address, with e-mail verification.
+  \item \textbf{User profiles:} name, e-mail, year of study, major(s),
+        minor(s), skills/specialties and current groups; users can view each
+        other's profiles.
+  \item \textbf{Four category boards:} \emph{Course Groups},
+        \emph{Erasmus}, \emph{Startups \& Projects} and \emph{Events}.
+  \item \textbf{Two post types:} ``group looking for members'' and
+        ``person looking for a group''.
+  \item \textbf{Create, edit and delete posts/groups:} title, description,
+        capacity (current/maximum), ``looking for'' (specific qualities or
+        skills needed) and a category-specific field (course code, Erasmus
+        school and term, or event name and date).
+  \item \textbf{Browse, search and filter:} filter a board by course code,
+        school, tag or groups that still have open spots.
+  \item \textbf{Join requests:} a student requests to join a group; the group
+        owner accepts or declines. Capacity updates automatically and the post
+        closes when the group is full.
+  \item \textbf{My Groups page:} groups the user owns or belongs to, their
+        members and pending join requests.
+\end{enumerate}
+
+\subsection{Optional Features (if time permits)}
+\begin{itemize}
+  \item \textbf{Random matchmaking:} ``match me'' with other students who
+        are also looking for a group for the same course or event.
+  \item \textbf{Friends:} add friends and see which groups they are in.
+  \item \textbf{In-app group chat} for members of a group.
+  \item \textbf{Push notifications} for new join requests and acceptances.
+  \item \textbf{Course list autocomplete} from the SU course catalogue.
+\end{itemize}
+
+\section{Data Requirements}
+
+The app requires a cloud database so that posts and groups are shared between
+all users in real time. We plan to use \textbf{Firebase Authentication} for
+accounts and \textbf{Cloud Firestore} (NoSQL) for application data. No external
+API is required for the core features. Small local preferences (e.g.\ last used
+filters) will be kept on the device with \texttt{shared\_preferences}.
+
+\begin{tabularx}{\textwidth}{@{}lX@{}}
+  \toprule
+  \textbf{Collection} & \textbf{Main fields} \\
+  \midrule
+  \texttt{users}        & uid, name, e-mail, year, majors, minors, skills, group IDs \\
+  \texttt{groups}       & title, description, category, capacity, owner ID, member IDs,
+                          ``looking for'', category field (course code / school \& term / event \& date) \\
+  \texttt{posts}        & type (group seeking members / person seeking group), category,
+                          author ID, linked group ID, text, created at, status (open/closed) \\
+  \texttt{joinRequests} & group ID, user ID, status (pending/accepted/declined), created at \\
+  \midrule
+  \multicolumn{2}{@{}l}{\emph{Optional:} \texttt{friendships} (user pairs), \texttt{messages} (group chat).} \\
+  \bottomrule
+\end{tabularx}
+
+\section{Potential Challenges}
+
+\begin{itemize}
+  \item \textbf{Restricting access to SU students:} enforcing the e-mail
+        domain and verification, and writing Firestore security rules so users
+        can only edit their own data.
+  \item \textbf{Data modelling and queries:} Firestore has limits on
+        multi-field filtering, so board filters will need composite indexes
+        and some data duplication.
+  \item \textbf{Consistency:} two students may be accepted into the last spot
+        at the same time; membership and capacity updates must use
+        transactions.
+  \item \textbf{State management:} keeping boards, group pages and profiles
+        in sync with real-time updates across many screens.
+  \item \textbf{Privacy and moderation:} letting users control which profile
+        details are visible and handling inappropriate posts.
+\end{itemize}
+
+\section{Team Responsibilities}
+
+\textbf{Step 1 coordinator:} Mert Ali İlter 
+
+% Suggested task buckets for later assignment:
+%   - Writing proposal sections (overview, features, data, challenges)
+%   - Creating the GitHub repo, README.md and Flutter .gitignore; initial commit
+%   - Adding all members, the instructor and the TA as collaborators
+%   - Proofreading, compiling and submitting the PDF on SUCourse
+%   - Organising meetings and communicating with the TA (coordinator)
+\vspace{0.5ex}
+\begin{tabularx}{\textwidth}{@{}lX@{}}
+  \toprule
+  \textbf{Member} & \textbf{Assigned tasks} \\
+  \midrule
+  Azra At & \todo{tasks} \\
+  Ece Ulutas & \todo{tasks} \\
+  Elif Çamlıkaya & \todo{tasks} \\
+  Mert Ali İlter & \todo{tasks} \\
+
+  \bottomrule
+\end{tabularx}
+
+\end{document}
