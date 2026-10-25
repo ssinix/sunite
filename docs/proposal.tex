@@ -68,8 +68,9 @@ groups around their events.
   \item \textbf{User profiles:} name, e-mail, year of study, major(s),
         minor(s), skills/specialties and current groups; users can view each
         other's profiles.
-  \item \textbf{Four category boards:} \emph{Course Groups},
-        \emph{Erasmus}, \emph{Startups \& Projects} and \emph{Events}.
+    \item \textbf{Four category boards:} \emph{Course Groups},
+        \emph{Erasmus}, \emph{Startups \& Projects} and \emph{Events},
+        all built on one shared post/group structure with a category field.
   \item \textbf{Two post types:} ``group looking for members'' and
         ``person looking for a group''.
   \item \textbf{Create, edit and delete posts/groups:} title, description,
@@ -108,15 +109,31 @@ filters) will be kept on the device with \texttt{shared\_preferences}.
   \textbf{Collection} & \textbf{Main fields} \\
   \midrule
   \texttt{users}        & uid, name, e-mail, year, majors, minors, skills, group IDs \\
-  \texttt{groups}       & title, description, category, capacity, owner ID, member IDs,
-                          ``looking for'', category field (course code / school \& term / event \& date) \\
+    \texttt{groups}       & title, description, category, categoryDetail, capacity (current/max),
+                          owner ID, member IDs, ``looking for'' \\
   \texttt{posts}        & type (group seeking members / person seeking group), category,
-                          author ID, linked group ID, text, created at, status (open/closed) \\
+                          categoryDetail, author ID, linked group ID (empty for ``person seeking group''),
+                          text, created at, status (open/closed) \\
   \texttt{joinRequests} & group ID, user ID, status (pending/accepted/declined), created at \\
   \midrule
   \multicolumn{2}{@{}l}{\emph{Optional:} \texttt{friendships} (user pairs), \texttt{messages} (group chat).} \\
   \bottomrule
 \end{tabularx}
+
+\vspace{1ex}
+\textbf{How posts and groups relate.} A \emph{group} is the actual team: it
+stores the owner, member list and capacity, and is the only place where
+capacity is kept. A \emph{post} is the listing shown on a board. A ``group
+looking for members'' post points to its group through \texttt{linked group
+ID}; a ``person looking for a group'' post has no linked group. The open/closed
+status is stored in the post and is set to closed automatically when the linked
+group reaches its maximum capacity.
+
+All four boards share this single \texttt{posts}/\texttt{groups} structure.
+They are told apart by the \texttt{category} field (course, Erasmus, startup,
+event) and one generic \texttt{categoryDetail} field (course code, school and
+term, or event name and date). This lets the same board, create-post and group
+screens be reused for every category, which keeps the scope manageable.
 
 \section{Potential Challenges}
 
@@ -151,10 +168,10 @@ filters) will be kept on the device with \texttt{shared\_preferences}.
   \toprule
   \textbf{Member} & \textbf{Assigned tasks} \\
   \midrule
-  Azra At & Login Page and Database \\
-  Ece Ulutas & Groups Page and Design \\
-  Elif Çamlıkaya & Main Page and Design \\
-  Mert Ali İlter & Backend \\
+  Azra At & Created the repository and wrote Introduction \\
+  Ece Ulutas & Wrote Core Features \\
+  Elif Çamlıkaya & Wrote Data Requirements\\
+  Mert Ali İlter (Coordinator) & Arranged Meetings and Potential Challenges \\
 
   \bottomrule
 \end{tabularx}
