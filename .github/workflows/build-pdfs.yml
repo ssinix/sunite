@@ -1,0 +1,52 @@
+# Rebuilds docs/*.pdf whenever a .tex file under docs/ changes on main,
+# and commits the result back. On pull requests it only checks that the
+# documents still compile.
+name: Build PDFs
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "docs/**.tex"
+      - ".github/workflows/build-pdfs.yml"
+  pull_request:
+    paths:
+      - "docs/**.tex"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+# A newer push supersedes an in-progress build, so two quick pushes
+# can't race each other when committing the PDFs.
+concurrency:
+  group: build-pdfs-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compile LaTeX
+        uses: xu-cheng/latex-action@v4
+        with:
+          root_file: docs/*.tex
+          work_in_root_file_dir: true
+          # fontspec needs XeLaTeX or LuaLaTeX
+          latexmk_use_xelatex: true
+
+      - name: Commit updated PDFs
+        if: github.ref == 'refs/heads/main'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/*.pdf
+          if git diff --cached --quiet; then
+            echo "PDFs unchanged"
+          else
+            git commit -m "Rebuild PDFs from LaTeX sources"
+            git pull --rebase
+            git push
+          fi
