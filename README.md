@@ -15,6 +15,29 @@ This repository is developed for **CS310 Mobile Application Development**, Saban
 | Elif Çamlıkaya | 35191 |
 | Mert Ali İlter | 34447 |
 
+## Running the app
+
+Built and tested with **Flutter 3.47.8** (stable channel, Dart 3.13.7) on an Android emulator (Pixel 8, API 35).
+
+1. Start an Android emulator (Android Studio → Device Manager → ▶).
+2. From the project root, run:
+
+```bash
+flutter pub get
+flutter run
+```
+
+Checks: `flutter analyze` (lints) and `flutter test` (widget tests).
+
 ## Repository structure
 
-- `docs/`: project documents (Step 1 proposal source and PDF)
+- `lib/main.dart`: app entry point, theme and routes
+- `lib/screens/`: one folder per screen; `main_shell.dart` holds the bottom navigation bar
+- `lib/utils/`: shared colors, text styles, spacing and theme
+- `assets/`: Inter font and images
+- `test/`: widget tests
+- `docs/`: project documents (Step 1 proposal, Step 2.1 wireframes)
+
+## Credits
+
+Font: [Inter](https://github.com/rsms/inter), SIL Open Font License 1.1.
