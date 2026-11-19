@@ -2,7 +2,7 @@ import 'package:sunite/models/group.dart';
 import 'package:sunite/models/join_request.dart';
 import 'package:sunite/models/user_profile.dart';
 
-// Sample data until groups come from the backend (Step 3).
+// Sample data until groups come from the backend.
 // The current user is SampleProfiles.currentUser (Azra).
 
 const _azra = SampleProfiles.currentUser;
@@ -15,7 +15,10 @@ const _mert = UserProfile(
   majors: ['Computer Science & Eng.'],
   minors: [],
   skills: ['Backend', 'Firebase'],
-  currentGroups: [],
+  currentGroups: [
+    GroupMembership(groupName: 'ENS491 project team', isOwner: true),
+    GroupMembership(groupName: 'CS310 app team', isOwner: false),
+  ],
 );
 
 const _ece = UserProfile(
@@ -25,7 +28,10 @@ const _ece = UserProfile(
   majors: ['Computer Science & Eng.'],
   minors: [],
   skills: ['Flutter', 'UI design'],
-  currentGroups: [],
+  currentGroups: [
+    GroupMembership(groupName: 'ENS491 project team', isOwner: false),
+    GroupMembership(groupName: 'CS412 study group', isOwner: false),
+  ],
 );
 
 const _can = UserProfile(
@@ -35,7 +41,10 @@ const _can = UserProfile(
   majors: ['Electronics Eng.'],
   minors: [],
   skills: ['Firebase'],
-  currentGroups: [],
+  currentGroups: [
+    GroupMembership(groupName: 'CS412 study group', isOwner: true),
+    GroupMembership(groupName: 'Campus food-waste app', isOwner: false),
+  ],
 );
 
 class SampleGroups {
@@ -57,10 +66,11 @@ class SampleGroups {
       title: 'Campus food-waste app',
       category: 'Startups & Projects',
       lookingFor: ['Backend', 'Marketing'],
-      maxMembers: 4,
+      maxMembers: 3,
       owner: _azra,
       members: [_azra, _can],
-      pendingRequests: [],
+      // More requests than open spots: accepting one fills the group
+      pendingRequests: [_mert, _ece],
     ),
     Group(
       id: 'career-fair',

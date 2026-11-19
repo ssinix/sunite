@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sunite/data/sample_groups.dart';
 import 'package:sunite/models/group.dart';
 import 'package:sunite/models/join_request.dart';
+import 'package:sunite/screens/my_groups/manage_group_screen.dart';
 import 'package:sunite/utils/app_colors.dart';
 import 'package:sunite/utils/app_spacing.dart';
 import 'package:sunite/utils/snackbar_utils.dart';
@@ -35,9 +36,31 @@ class _MyGroupsScreenState extends State<MyGroupsScreen> {
   int _selectedTab = 0;
 
   // Copies of the sample lists, so this screen can change its own lists
-  final List<Group> _ownedGroups = [...SampleGroups.owned];
+  List<Group> _ownedGroups = [...SampleGroups.owned];
   final List<Group> _joinedGroups = [...SampleGroups.joined];
   List<JoinRequest> _requests = [...SampleGroups.myRequests];
+
+  void _openManageGroup(Group group) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ManageGroupScreen(
+          group: group,
+          onChanged: _updateOwnedGroup,
+        ),
+      ),
+    );
+  }
+
+  // Swaps the old copy of a group for the updated one from Manage Group
+  void _updateOwnedGroup(Group updated) {
+    setState(() {
+      _ownedGroups = [
+        for (final group in _ownedGroups)
+          group.id == updated.id ? updated : group,
+      ];
+    });
+  }
 
   // Cancels a pending request, or clears a declined one
   void _removeRequest(JoinRequest request) {
@@ -143,8 +166,7 @@ class _MyGroupsScreenState extends State<MyGroupsScreen> {
                   textColor: colors.onError,
                 )
               : null,
-          // TODO: open Manage Group (next step)
-          onTap: () => showAppSnackBar(context, 'Manage Group coming soon'),
+          onTap: () => _openManageGroup(group),
         );
       },
     );
