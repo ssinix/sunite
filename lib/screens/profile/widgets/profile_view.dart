@@ -48,10 +48,16 @@ class ProfileView extends StatelessWidget {
           children: [
             Icon(Icons.mail_outline, size: 16, color: colors.onSurfaceVariant),
             const SizedBox(width: AppSpacing.xs),
-            Text(
-              profile.email,
-              style: textTheme.bodyMedium
-                  ?.copyWith(color: colors.onSurfaceVariant),
+            // Flexible lets a long e-mail shrink with "…" instead of
+            // overflowing on narrow phones or with a large font size
+            Flexible(
+              child: Text(
+                profile.email,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: textTheme.bodyMedium
+                    ?.copyWith(color: colors.onSurfaceVariant),
+              ),
             ),
           ],
         ),
