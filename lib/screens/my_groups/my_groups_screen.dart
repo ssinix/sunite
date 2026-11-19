@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sunite/data/sample_groups.dart';
 import 'package:sunite/models/group.dart';
 import 'package:sunite/models/join_request.dart';
+import 'package:sunite/screens/group_detail/group_detail_screen.dart';
 import 'package:sunite/screens/my_groups/manage_group_screen.dart';
 import 'package:sunite/utils/app_colors.dart';
 import 'package:sunite/utils/app_spacing.dart';
@@ -37,7 +38,7 @@ class _MyGroupsScreenState extends State<MyGroupsScreen> {
 
   // Copies of the sample lists, so this screen can change its own lists
   List<Group> _ownedGroups = [...SampleGroups.owned];
-  final List<Group> _joinedGroups = [...SampleGroups.joined];
+  List<Group> _joinedGroups = [...SampleGroups.joined];
   List<JoinRequest> _requests = [...SampleGroups.myRequests];
 
   void _openManageGroup(Group group) {
@@ -51,6 +52,58 @@ class _MyGroupsScreenState extends State<MyGroupsScreen> {
         ),
       ),
     );
+  }
+
+  void _openGroupDetail(Group group) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => GroupDetailScreen(
+          group: group,
+          onChanged: _syncGroup,
+        ),
+      ),
+    );
+  }
+
+  // Keeps Joined and My Requests in step with a change made on Group
+  // Detail: the user left the group or sent a new join request
+  void _syncGroup(Group updated) {
+    final isMember = updated.hasMember(currentUser);
+    final hasRequest = updated.hasRequestFrom(currentUser);
+
+    setState(() {
+      // Joined: drop the group if the user left it, otherwise update it
+      if (isMember) {
+        _joinedGroups = [
+          for (final group in _joinedGroups)
+            group.id == updated.id ? updated : group,
+        ];
+      } else {
+        _joinedGroups =
+            _joinedGroups.where((g) => g.id != updated.id).toList();
+      }
+
+      // My Requests: update the group's request, now pending if one was sent
+      _requests = [
+        for (final request in _requests)
+          request.group.id == updated.id
+              ? JoinRequest(
+                  group: updated,
+                  status: hasRequest ? RequestStatus.pending : request.status,
+                )
+              : request,
+      ];
+
+      // A new request to a group that wasn't listed (left, then asked again)
+      final isListed = _requests.any((r) => r.group.id == updated.id);
+      if (hasRequest && !isListed) {
+        _requests = [
+          ..._requests,
+          JoinRequest(group: updated, status: RequestStatus.pending),
+        ];
+      }
+    });
   }
 
   void _deleteOwnedGroup(Group deleted) {
@@ -199,8 +252,7 @@ class _MyGroupsScreenState extends State<MyGroupsScreen> {
         return GroupCard(
           key: ValueKey(group.id),
           group: group,
-          // TODO: open Group Detail once that screen exists
-          onTap: () => showAppSnackBar(context, 'Group Detail coming soon'),
+          onTap: () => _openGroupDetail(group),
         );
       },
     );
@@ -227,8 +279,7 @@ class _MyGroupsScreenState extends State<MyGroupsScreen> {
           key: ValueKey(request.group.id),
           group: request.group,
           badge: _buildStatusLabel(request.status),
-          // TODO: open Group Detail once that screen exists
-          onTap: () => showAppSnackBar(context, 'Group Detail coming soon'),
+          onTap: () => _openGroupDetail(request.group),
           action: TextButton(
             onPressed: () => _removeRequest(request),
             child: Text(

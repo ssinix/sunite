@@ -83,8 +83,6 @@ class _ManageGroupScreenState extends State<ManageGroupScreen> {
     );
   }
 
-  bool _isOwner(UserProfile user) => user.email == _group.owner.email;
-
   void _openProfile(UserProfile user) {
     Navigator.push(
       context,
@@ -204,9 +202,9 @@ class _ManageGroupScreenState extends State<ManageGroupScreen> {
               leading: UserAvatar(name: member.fullName),
               title: Text(member.fullName),
               subtitle: Text(
-                _isOwner(member) ? 'Owner' : 'Member',
+                _group.isOwnedBy(member) ? 'Owner' : 'Member',
               ),
-              trailing: _isOwner(member)
+              trailing: _group.isOwnedBy(member)
                   ? null
                   : TextButton(
                       onPressed: () => _removeMember(member),
@@ -215,7 +213,7 @@ class _ManageGroupScreenState extends State<ManageGroupScreen> {
                       ),
                       child: const Text('Remove'),
                     ),
-              onTap: _isOwner(member)
+              onTap: _group.isOwnedBy(member)
                   ? null
                   : () => _openProfile(member),
             ),

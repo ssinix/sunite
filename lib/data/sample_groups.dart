@@ -3,9 +3,11 @@ import 'package:sunite/models/join_request.dart';
 import 'package:sunite/models/user_profile.dart';
 
 // Sample data until groups come from the backend.
-// The current user is SampleProfiles.currentUser (Azra).
 
-const _azra = SampleProfiles.currentUser;
+// The logged-in user until login exists
+const currentUser = SampleProfiles.currentUser;
+
+const _azra = currentUser;
 const _elif = SampleProfiles.otherUser;
 
 const _mert = UserProfile(
@@ -55,6 +57,8 @@ class SampleGroups {
       title: 'CS310 app team',
       category: 'Course Groups',
       categoryDetail: 'CS310',
+      description: 'Building SUnite for the CS310 project. We meet on '
+          'Tuesdays after class and need people who know Flutter.',
       lookingFor: ['Flutter'],
       maxMembers: 5,
       owner: _azra,
@@ -65,6 +69,9 @@ class SampleGroups {
       id: 'food-waste-app',
       title: 'Campus food-waste app',
       category: 'Startups & Projects',
+      description: 'An app that lists leftover food from campus cafes '
+          'at a discount. Looking for a backend developer and someone '
+          'for marketing.',
       lookingFor: ['Backend', 'Marketing'],
       maxMembers: 3,
       owner: _azra,
@@ -77,6 +84,8 @@ class SampleGroups {
       title: 'Going to the SU Career Fair together',
       category: 'Events',
       categoryDetail: '14 Dec',
+      description: 'Visiting the career fair as a group and preparing '
+          'our CVs together the week before.',
       lookingFor: ['Any major'],
       maxMembers: 6,
       owner: _azra,
@@ -92,6 +101,8 @@ class SampleGroups {
       title: 'ENS491 project team',
       category: 'Course Groups',
       categoryDetail: 'ENS491',
+      description: 'Graduation project on recommending study groups '
+          'with machine learning.',
       lookingFor: ['Backend', 'ML'],
       maxMembers: 4,
       owner: _mert,
@@ -109,6 +120,8 @@ class SampleGroups {
         title: 'CS412 study group',
         category: 'Course Groups',
         categoryDetail: 'CS412',
+        description: 'Weekly study sessions in the library before '
+            'the CS412 midterm and final.',
         lookingFor: ['Python', 'ML'],
         maxMembers: 4,
         owner: _can,
@@ -123,6 +136,8 @@ class SampleGroups {
         title: 'Going to Bologna in Fall 2027',
         category: 'Erasmus',
         categoryDetail: 'Bologna',
+        description: 'Looking for a flatmate near the university for '
+            'the Fall 2027 semester.',
         lookingFor: ['Flatmate'],
         maxMembers: 3,
         owner: _elif,

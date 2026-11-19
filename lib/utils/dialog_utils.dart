@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 
-// O4. Confirmation dialog for destructive actions (Delete Group, and
-// Delete post on My Posts). The confirm button is red.
+// Confirmation dialog, e.g. O4 Delete Group or O2 Request to join.
+// The confirm button is red for destructive actions (isDestructive).
 // Returns true only if the user taps the confirm button.
 Future<bool> showConfirmDialog(
   BuildContext context, {
   required String title,
   required String message,
   required String confirmLabel,
+  bool isDestructive = true,
 }) async {
   final confirmed = await showDialog<bool>(
     context: context,
@@ -24,10 +25,13 @@ Future<bool> showConfirmDialog(
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
-            style: FilledButton.styleFrom(
-              backgroundColor: colors.error,
-              foregroundColor: colors.onError,
-            ),
+            // null keeps the theme's normal button colors
+            style: isDestructive
+                ? FilledButton.styleFrom(
+                    backgroundColor: colors.error,
+                    foregroundColor: colors.onError,
+                  )
+                : null,
             child: Text(confirmLabel),
           ),
         ],
