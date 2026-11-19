@@ -5,6 +5,7 @@ import 'package:sunite/screens/my_groups/widgets/pending_request_card.dart';
 import 'package:sunite/screens/profile/other_profile_screen.dart';
 import 'package:sunite/utils/app_spacing.dart';
 import 'package:sunite/utils/app_text_styles.dart';
+import 'package:sunite/utils/dialog_utils.dart';
 import 'package:sunite/utils/snackbar_utils.dart';
 import 'package:sunite/widgets/user_avatar.dart';
 
@@ -16,10 +17,14 @@ class ManageGroupScreen extends StatefulWidget {
   // Called after every change, so My Groups can update the group's card
   final void Function(Group updated) onChanged;
 
+  // Called when the owner deletes the group, so My Groups can remove it
+  final void Function(Group deleted) onDelete;
+
   const ManageGroupScreen({
     super.key,
     required this.group,
     required this.onChanged,
+    required this.onDelete,
   });
 
   @override
@@ -94,9 +99,20 @@ class _ManageGroupScreenState extends State<ManageGroupScreen> {
     showAppSnackBar(context, 'Edit Post coming soon');
   }
 
-  // TODO: confirmation dialog and delete (next step)
-  void _deleteGroup() {
-    showAppSnackBar(context, 'Delete Group coming soon');
+  // Asks for confirmation, then deletes the group and goes back to My Groups
+  Future<void> _deleteGroup() async {
+    final confirmed = await showConfirmDialog(
+      context,
+      title: 'Delete this group?',
+      message: 'This can\'t be undone. Its members and pending requests '
+          'are removed too.',
+      confirmLabel: 'Delete',
+    );
+    // Stop if the user cancelled, or if this screen closed in the meantime
+    if (!confirmed || !mounted) return;
+
+    widget.onDelete(_group);
+    Navigator.pop(context);
   }
 
   @override

@@ -47,9 +47,17 @@ class _MyGroupsScreenState extends State<MyGroupsScreen> {
         builder: (context) => ManageGroupScreen(
           group: group,
           onChanged: _updateOwnedGroup,
+          onDelete: _deleteOwnedGroup,
         ),
       ),
     );
+  }
+
+  void _deleteOwnedGroup(Group deleted) {
+    setState(() {
+      _ownedGroups = _ownedGroups.where((g) => g.id != deleted.id).toList();
+    });
+    showAppSnackBar(context, '"${deleted.title}" was deleted');
   }
 
   // Swaps the old copy of a group for the updated one from Manage Group
