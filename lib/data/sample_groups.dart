@@ -21,6 +21,7 @@ const _mert = UserProfile(
     GroupMembership(groupName: 'ENS491 project team', isOwner: true),
     GroupMembership(groupName: 'CS310 app team', isOwner: false),
   ],
+  photoUrl: 'https://api.dicebear.com/9.x/notionists/png?size=128&seed=sunite-2',
 );
 
 const _ece = UserProfile(
@@ -34,8 +35,10 @@ const _ece = UserProfile(
     GroupMembership(groupName: 'ENS491 project team', isOwner: false),
     GroupMembership(groupName: 'CS412 study group', isOwner: false),
   ],
+  photoUrl: 'https://api.dicebear.com/9.x/notionists/png?size=128&seed=sunite-4',
 );
 
+// No photo: shows initials
 const _can = UserProfile(
   fullName: 'Can Yılmaz',
   email: 'can.yilmaz@sabanciuniv.edu',

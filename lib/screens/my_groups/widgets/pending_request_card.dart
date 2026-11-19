@@ -41,7 +41,7 @@ class PendingRequestCard extends StatelessWidget {
           children: [
             ListTile(
               contentPadding: EdgeInsets.zero,
-              leading: UserAvatar(name: user.fullName),
+              leading: UserAvatar(user: user),
               title: Text(
                 user.fullName,
                 style: const TextStyle(fontWeight: FontWeight.w600),

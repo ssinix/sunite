@@ -9,6 +9,7 @@ import 'package:sunite/utils/app_text_styles.dart';
 import 'package:sunite/utils/dialog_utils.dart';
 import 'package:sunite/utils/snackbar_utils.dart';
 import 'package:sunite/widgets/info_row.dart';
+import 'package:sunite/widgets/member_avatars.dart';
 import 'package:sunite/widgets/status_label.dart';
 import 'package:sunite/widgets/user_avatar.dart';
 
@@ -209,7 +210,7 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
           Card(
             margin: EdgeInsets.zero,
             child: ListTile(
-              leading: UserAvatar(name: _group.owner.fullName),
+              leading: UserAvatar(user: _group.owner),
               title: Text(
                 _group.owner.fullName,
                 style: const TextStyle(fontWeight: FontWeight.w600),
@@ -228,14 +229,12 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
             style: AppTextStyles.sectionLabel,
           ),
           const SizedBox(height: AppSpacing.sm),
-          Wrap(
-            spacing: AppSpacing.sm,
-            runSpacing: AppSpacing.sm,
-            children: [
-              for (final member in _group.members) _buildMemberAvatar(member),
-              for (int i = _group.memberCount; i < _group.maxMembers; i++)
-                _buildOpenSpot(),
-            ],
+          MemberAvatars(
+            group: _group,
+            // Tapping a member opens their profile (not your own)
+            onMemberTap: (member) {
+              if (!_isCurrentUser(member)) _openProfile(member);
+            },
           ),
         ],
       ),
@@ -257,30 +256,6 @@ class _GroupDetailScreenState extends State<GroupDetailScreen> {
   String _userDetails(UserProfile user) {
     final parts = [user.year, user.majors.join(', ')];
     return parts.where((part) => part.isNotEmpty).join(' · ');
-  }
-
-  // A member's avatar; tapping it opens their profile (not your own)
-  Widget _buildMemberAvatar(UserProfile member) {
-    return Tooltip(
-      message: member.fullName,
-      child: GestureDetector(
-        onTap: _isCurrentUser(member) ? null : () => _openProfile(member),
-        child: UserAvatar(name: member.fullName),
-      ),
-    );
-  }
-
-  Widget _buildOpenSpot() {
-    final colors = Theme.of(context).colorScheme;
-
-    return Container(
-      width: 40,
-      height: 40,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        border: Border.all(color: colors.outlineVariant, width: 1.5),
-      ),
-    );
   }
 
   // The bottom button for each viewer (wireframe states 6a-6e)

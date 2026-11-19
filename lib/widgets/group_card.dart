@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sunite/models/group.dart';
 import 'package:sunite/utils/app_spacing.dart';
+import 'package:sunite/widgets/member_avatars.dart';
 
 // One group in a list: category, title, looking-for tags and capacity.
 // Screens add their own extras through badge (top right) and action
@@ -91,6 +92,17 @@ class GroupCard extends StatelessWidget {
                   const SizedBox(width: AppSpacing.xs),
                   Text('${group.memberCount}/${group.maxMembers}'),
                 ],
+              ),
+              const SizedBox(height: AppSpacing.sm),
+
+              // Members as small circles, under the capacity
+              Align(
+                alignment: Alignment.centerRight,
+                child: MemberAvatars(
+                  group: group,
+                  radius: 12,
+                  alignment: WrapAlignment.end,
+                ),
               ),
 
               if (action != null)

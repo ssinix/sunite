@@ -199,7 +199,7 @@ class _ManageGroupScreenState extends State<ManageGroupScreen> {
             ListTile(
               key: ValueKey(member.email),
               contentPadding: EdgeInsets.zero,
-              leading: UserAvatar(name: member.fullName),
+              leading: UserAvatar(user: member),
               title: Text(member.fullName),
               subtitle: Text(
                 _group.isOwnedBy(member) ? 'Owner' : 'Member',

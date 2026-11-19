@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sunite/models/user_profile.dart';
 import 'package:sunite/utils/app_spacing.dart';
 import 'package:sunite/utils/app_text_styles.dart';
+import 'package:sunite/widgets/user_avatar.dart';
 
 // The profile layout shared by My Profile and Other User's Profile.
 // Screen-specific controls (Contact by e-mail, Edit Profile, My Posts,
@@ -29,13 +30,7 @@ class ProfileView extends StatelessWidget {
       padding: AppSpacing.screenPadding,
       children: [
         // Avatar, name, e-mail and year
-        Center(
-          child: CircleAvatar(
-            radius: 44,
-            backgroundColor: colors.surfaceContainerHighest,
-            child: Icon(Icons.person, size: 48, color: colors.outline),
-          ),
-        ),
+        Center(child: UserAvatar(user: profile, radius: 44)),
         const SizedBox(height: AppSpacing.sm),
         Text(
           profile.fullName,

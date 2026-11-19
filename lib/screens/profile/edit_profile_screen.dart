@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sunite/models/user_profile.dart';
 import 'package:sunite/utils/app_spacing.dart';
+import 'package:sunite/widgets/user_avatar.dart';
 
 // 13. Edit Profile: edits year, majors, minors and skills.
 //
@@ -136,13 +137,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           padding: AppSpacing.screenPadding,
           children: [
             // Avatar with name and e-mail (these can't be edited)
-            Center(
-              child: CircleAvatar(
-                radius: 36,
-                backgroundColor: colors.surfaceContainerHighest,
-                child: Icon(Icons.person, size: 40, color: colors.outline),
-              ),
-            ),
+            Center(child: UserAvatar(user: widget.profile, radius: 36)),
             const SizedBox(height: AppSpacing.sm),
             Text(
               '${widget.profile.fullName} · ${widget.profile.email}',
