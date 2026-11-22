@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sunite/models/user_profile.dart';
+import 'package:sunite/screens/profile/edit_profile_screen.dart';
 import 'package:sunite/screens/profile/other_profile_screen.dart';
 import 'package:sunite/screens/profile/profile_screen.dart';
 
@@ -54,5 +55,37 @@ void main() {
     expect(find.text('Contact by e-mail'), findsOneWidget);
     expect(find.text('Log Out'), findsNothing);
     expect(find.text('My Posts'), findsNothing);
+  });
+
+  // Issue #3: closing the "Add major" dialog used to crash Edit Profile
+  testWidgets('Add major dialog can be cancelled and used again',
+      (tester) async {
+    useTallScreen(tester);
+    await tester.pumpWidget(const MaterialApp(
+      home: EditProfileScreen(profile: SampleProfiles.currentUser),
+    ));
+
+    // Open the dialog and cancel it
+    await tester.tap(find.text('Add major'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Cancel'));
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(find.byType(AlertDialog), findsNothing);
+
+    // Open it again and add a major
+    await tester.tap(find.text('Add major'));
+    await tester.pumpAndSettle();
+    await tester.enterText(
+      find.descendant(
+        of: find.byType(AlertDialog),
+        matching: find.byType(TextField),
+      ),
+      'Economics',
+    );
+    await tester.tap(find.widgetWithText(FilledButton, 'Add'));
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(find.text('Economics'), findsOneWidget);
   });
 }
