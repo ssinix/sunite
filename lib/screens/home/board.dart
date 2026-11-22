@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:sunite/utils/app_spacing.dart';
 
-// 5. Board — placeholder page for now (one template for all four categories)
+
 class BoardScreen extends StatelessWidget {
   const BoardScreen({super.key, required this.title});
 
-  final String title; // e.g. 'Course Groups', comes from the tapped Home button
+  final String title;
 
   @override
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
 
     return Scaffold(
-      // The back arrow appears automatically because this screen was pushed
+
       appBar: AppBar(
         title: Text(title),
         centerTitle: true,
@@ -21,7 +21,7 @@ class BoardScreen extends StatelessWidget {
         child: Padding(
           padding: AppSpacing.screenPadding,
           child: Column(
-            mainAxisSize: MainAxisSize.min, // keep the group small and centered
+            mainAxisSize: MainAxisSize.min,
             children: [
               Icon(Icons.construction, size: 64, color: Colors.grey.shade400),
               const SizedBox(height: AppSpacing.md),
@@ -37,7 +37,7 @@ class BoardScreen extends StatelessWidget {
               ),
               const SizedBox(height: AppSpacing.lg),
               OutlinedButton.icon(
-                onPressed: () => Navigator.pop(context), // back to Home
+                onPressed: () => Navigator.pop(context),
                 icon: const Icon(Icons.arrow_back),
                 label: const Text('Back to Home'),
               ),

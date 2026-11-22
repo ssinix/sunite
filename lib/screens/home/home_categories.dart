@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sunite/screens/home/board.dart';
 import 'package:sunite/utils/app_spacing.dart';
 
-// The 4 category buttons at the top of Home (4)
 
-// ---------- DATA (placeholder list; change labels/icons here) ----------
 
 class HomeCategory {
   final String label;
@@ -20,7 +18,7 @@ const List<HomeCategory> homeCategories = [
   HomeCategory(label: 'Events', icon: Icons.celebration),
 ];
 
-// ---------- THE GRID ----------
+
 
 /// 2 x 2 grid of category buttons, always exactly 200 tall
 class HomeCategoryGrid extends StatelessWidget {
@@ -47,14 +45,14 @@ class HomeCategoryGrid extends StatelessWidget {
   }
 }
 
-// ---------- ONE BUTTON ----------
+
 
 class HomeCategoryButton extends StatelessWidget {
   const HomeCategoryButton({super.key, required this.category});
 
   final HomeCategory category;
 
-  // Opens the Board (5) with this category's title
+
   void _openBoard(BuildContext context) {
     Navigator.push(
       context,
