@@ -41,9 +41,34 @@ void main() {
     await tester.tap(find.text('Save'));
     await tester.pumpAndSettle();
 
+    // Confirmation dialog after the valid form
+    expect(find.text('Profile saved'), findsOneWidget);
+    await tester.tap(find.text('Done'));
+    await tester.pumpAndSettle();
+
     // Back on My Profile with the new skill
     expect(find.text('Log Out'), findsOneWidget);
     expect(find.text('Figma'), findsOneWidget);
+  });
+
+  testWidgets('Edit Profile shows inline errors and no dialog when invalid',
+      (tester) async {
+    useTallScreen(tester);
+    await tester.pumpWidget(const MaterialApp(
+      home: EditProfileScreen(profile: SampleProfiles.currentUser),
+    ));
+
+    // Remove the only major, then try to save
+    await tester.tap(find.descendant(
+      of: find.widgetWithText(InputChip, 'Computer Science & Eng.'),
+      matching: find.byIcon(Icons.clear),
+    ));
+    await tester.pump();
+    await tester.tap(find.text('Save'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Add at least one major'), findsOneWidget);
+    expect(find.text('Profile saved'), findsNothing);
   });
 
   testWidgets('Other User\'s Profile has no owner controls', (tester) async {
