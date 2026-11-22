@@ -64,32 +64,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     });
   }
 
-  // Small dialog with one text field, used for "+ Add major / minor"
+  // Opens the "+ Add major / minor" dialog and adds what the user typed
   Future<void> _showAddDialog(String title, List<String> list) async {
-    final controller = TextEditingController();
     final value = await showDialog<String>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(title),
-        content: TextField(
-          controller: controller,
-          autofocus: true,
-          textCapitalization: TextCapitalization.words,
-          onSubmitted: (text) => Navigator.pop(context, text),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(context, controller.text),
-            child: const Text('Add'),
-          ),
-        ],
-      ),
+      builder: (context) => _AddItemDialog(title: title),
     );
-    controller.dispose();
     if (value != null) _addTo(list, value);
   }
 
@@ -241,6 +221,53 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           ),
         ),
       ),
+    );
+  }
+}
+
+// Small dialog with one text field, used for "+ Add major / minor".
+// It owns its TextEditingController and disposes it in dispose(), which
+// runs only after the closing animation ends. Disposing it right after
+// showDialog returns crashed the app, because the TextField was still
+// on screen while the dialog animated out.
+class _AddItemDialog extends StatefulWidget {
+  final String title;
+
+  const _AddItemDialog({required this.title});
+
+  @override
+  State<_AddItemDialog> createState() => _AddItemDialogState();
+}
+
+class _AddItemDialogState extends State<_AddItemDialog> {
+  final _controller = TextEditingController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text(widget.title),
+      content: TextField(
+        controller: _controller,
+        autofocus: true,
+        textCapitalization: TextCapitalization.words,
+        onSubmitted: (text) => Navigator.pop(context, text),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancel'),
+        ),
+        FilledButton(
+          onPressed: () => Navigator.pop(context, _controller.text),
+          child: const Text('Add'),
+        ),
+      ],
     );
   }
 }
