@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:sunite/screens/login/login_screen.dart'; // for InputBox and AppLogo
+import 'package:sunite/screens/login/verify_email_screen.dart';
 
 class CreateAccountScreen extends StatefulWidget {
   const CreateAccountScreen({super.key});
@@ -38,7 +39,12 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
           : "Passwords do not match";
     });
 
-    Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => VerifyEmailScreen(email: _emailController.text.trim()),
+      ),
+    );
   }
 
   @override
