@@ -9,6 +9,9 @@ class UserProfile {
   final List<String> skills;
   final List<GroupMembership> currentGroups;
 
+  // Profile photo from the internet; null shows the initials instead
+  final String? photoUrl;
+
   const UserProfile({
     required this.fullName,
     required this.email,
@@ -17,6 +20,7 @@ class UserProfile {
     required this.minors,
     required this.skills,
     required this.currentGroups,
+    this.photoUrl,
   });
 
   // Returns a copy with only the given fields changed (used by Edit Profile)
@@ -34,6 +38,7 @@ class UserProfile {
       minors: minors ?? this.minors,
       skills: skills ?? this.skills,
       currentGroups: currentGroups,
+      photoUrl: photoUrl,
     );
   }
 }
@@ -69,6 +74,7 @@ class SampleProfiles {
       GroupMembership(groupName: 'CS310 app team', isOwner: true),
       GroupMembership(groupName: 'ENS491 project team', isOwner: false),
     ],
+    photoUrl: 'https://api.dicebear.com/9.x/notionists/png?size=128&seed=sunite-1',
   );
 
   static const UserProfile otherUser = UserProfile(
@@ -82,5 +88,6 @@ class SampleProfiles {
       GroupMembership(groupName: 'CS310 app team', isOwner: false),
       GroupMembership(groupName: 'SU Career Fair group', isOwner: true),
     ],
+    photoUrl: 'https://api.dicebear.com/9.x/notionists/png?size=128&seed=sunite-3',
   );
 }

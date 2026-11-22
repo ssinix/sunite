@@ -14,29 +14,33 @@ class MainShell extends StatefulWidget {
 class _MainShellState extends State<MainShell> {
   int _selectedIndex = 0;
 
-  // One screen per tab, in the same order as the destinations below
-  final List<Widget> _screens = const [
-    HomeScreen(),
-    MyGroupsScreen(),
-    ProfileScreen(),
-  ];
+  // Used by the bottom bar and by screens that switch tabs (Browse boards)
+  void _selectTab(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    // One screen per tab, in the same order as the destinations below.
+    // Built here (not const) so screens can get callbacks like _selectTab.
+    final List<Widget> screens = [
+      const HomeScreen(),
+      MyGroupsScreen(onBrowseBoards: () => _selectTab(0)),
+      const ProfileScreen(),
+    ];
+
     return Scaffold(
       // IndexedStack shows one screen but keeps the others alive,
       // so a tab keeps its state when you switch away and back
       body: IndexedStack(
         index: _selectedIndex,
-        children: _screens,
+        children: screens,
       ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _selectedIndex,
-        onDestinationSelected: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-        },
+        onDestinationSelected: _selectTab,
         destinations: const [
           NavigationDestination(
             icon: Icon(Icons.home_outlined),
