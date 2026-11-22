@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:sunite/screens/home/person_post_detail.dart';
 import 'package:sunite/utils/app_spacing.dart';
 
-// Latest posts shown on Home (4)
 
-// ---------- DATA (sample posts; replace with Firestore later) ----------
+
+
 
 enum HomePostType { group, person }
 
 class HomePost {
   final HomePostType type;
-  final String category;     // e.g. 'Course Groups'
-  final String code;         // course code, school or event, e.g. 'CS310'
+  final String category;
+  final String code;
   final String title;
   final List<String> tags;
-  final String? memberCount; // only group posts, e.g. '3/5'
-  final String? author;      // only person posts, e.g. 'Elif Ç. · 3rd year'
+  final String? memberCount;
+  final String? author;
+  final String? term;
+  final String? description;
 
   const HomePost({
     required this.type,
@@ -24,6 +27,8 @@ class HomePost {
     required this.tags,
     this.memberCount,
     this.author,
+    this.term,
+    this.description,
   });
 }
 
@@ -35,14 +40,19 @@ const List<HomePost> sampleHomePosts = [
     title: 'CS310 app team needs 2 more',
     tags: ['Flutter', 'Firebase'],
     memberCount: '3/5',
+    description:
+    'Mobile app project for CS310. We meet twice a week and build in Flutter.',
   ),
   HomePost(
     type: HomePostType.person,
     category: 'Erasmus',
     code: 'TU Delft',
-    title: 'Going in Spring 2027, looking for flatmates',
-    tags: ['Flatmate', 'Travel'],
-    author: 'Elif Ç. · 3rd year',
+    term: 'Spring 2027',
+    title: 'Going to TU Delft in Spring, looking for flatmates',
+    tags: ['Flatmate', 'Travel buddy', 'Same courses'],
+    author: 'Elif Çamlıkaya · 3rd year · Computer Science',
+    description:
+    'Looking for 1–2 people to share a flat near campus and travel together on weekends.',
   ),
   HomePost(
     type: HomePostType.group,
@@ -51,6 +61,8 @@ const List<HomePost> sampleHomePosts = [
     title: 'Campus food-waste app',
     tags: ['Backend', 'Marketing'],
     memberCount: '2/4',
+    description:
+    'An app that connects campus cafés with students to cut food waste.',
   ),
   HomePost(
     type: HomePostType.person,
@@ -58,11 +70,12 @@ const List<HomePost> sampleHomePosts = [
     code: 'PROJ201',
     title: 'Looking for a PROJ201 group',
     tags: ['Python', 'Reports'],
-    author: 'Mert A. · 2nd year',
+    author: 'Mert Ali İlter · 2nd year · Computer Science',
+    description: 'I can take the Python part and help with the reports.',
   ),
 ];
 
-// ---------- THE LIST ----------
+
 
 /// The scrolling list of post cards (goes inside Expanded on Home)
 class HomeLatestPosts extends StatelessWidget {
@@ -81,17 +94,19 @@ class HomeLatestPosts extends StatelessWidget {
   }
 }
 
-// ---------- ONE CARD ----------
 
-class HomePostCard extends StatelessWidget {
-  const HomePostCard({super.key, required this.post});
 
-  final HomePost post;
+/// Black "GROUP" badge or outlined "PERSON" badge
+class PostBadge extends StatelessWidget {
+  const PostBadge({super.key, required this.isGroup});
 
-  // Black "GROUP" badge or outlined "PERSON" badge
-  Widget _badge(bool isGroup) {
+  final bool isGroup;
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: 2),
+      padding:
+      const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: 2),
       decoration: BoxDecoration(
         color: isGroup ? Colors.black : Colors.white,
         border: Border.all(color: Colors.black),
@@ -107,16 +122,42 @@ class HomePostCard extends StatelessWidget {
       ),
     );
   }
+}
 
-  // Small rounded tag like "Flutter"
-  Widget _tag(String label) {
+/// Small rounded tag like "Flutter"
+class PostTag extends StatelessWidget {
+  const PostTag({super.key, required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: 2),
+      padding:
+      const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: 2),
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey.shade400),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(label, style: const TextStyle(fontSize: 11)),
+    );
+  }
+}
+
+
+
+class HomePostCard extends StatelessWidget {
+  const HomePostCard({super.key, required this.post});
+
+  final HomePost post;
+
+
+  void _open(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PostDetailScreen(post: post),
+      ),
     );
   }
 
@@ -125,10 +166,12 @@ class HomePostCard extends StatelessWidget {
     final text = Theme.of(context).textTheme;
     final isGroup = post.type == HomePostType.group;
 
+
+    final authorParts = (post.author ?? '').split(' · ');
+    final shortAuthor = authorParts.take(2).join(' · ');
+
     return GestureDetector(
-      onTap: () {
-        // TODO: open Group Detail (group posts) or Person Post Detail (person posts)
-      },
+      onTap: () => _open(context),
       child: Container(
         padding: const EdgeInsets.all(AppSpacing.md),
         decoration: BoxDecoration(
@@ -139,10 +182,10 @@ class HomePostCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 1) Badge + "Course Groups · CS310"
+
             Row(
               children: [
-                _badge(isGroup),
+                PostBadge(isGroup: isGroup),
                 const SizedBox(width: AppSpacing.sm),
                 Expanded(
                   child: Text(
@@ -155,7 +198,7 @@ class HomePostCard extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.sm),
 
-            // 2) Title
+
             Text(
               post.title,
               style: text.titleMedium?.copyWith(fontWeight: FontWeight.w600),
@@ -164,7 +207,7 @@ class HomePostCard extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.sm),
 
-            // 3) Tags on the left, member count on the right (group posts)
+
             Row(
               children: [
                 Expanded(
@@ -172,7 +215,7 @@ class HomePostCard extends StatelessWidget {
                     spacing: AppSpacing.xs,
                     runSpacing: AppSpacing.xs,
                     children: [
-                      for (final tag in post.tags) _tag(tag),
+                      for (final tag in post.tags) PostTag(label: tag),
                     ],
                   ),
                 ),
@@ -181,20 +224,22 @@ class HomePostCard extends StatelessWidget {
                   const SizedBox(width: AppSpacing.xs),
                   Text(
                     post.memberCount!,
-                    style: text.labelMedium?.copyWith(fontWeight: FontWeight.w700),
+                    style:
+                    text.labelMedium?.copyWith(fontWeight: FontWeight.w700),
                   ),
                 ],
               ],
             ),
 
-            // 4) Author (person posts only)
+
             if (post.author != null) ...[
               const SizedBox(height: AppSpacing.sm),
               Row(
                 children: [
-                  CircleAvatar(radius: 10, backgroundColor: Colors.grey.shade300),
+                  CircleAvatar(
+                      radius: 10, backgroundColor: Colors.grey.shade300),
                   const SizedBox(width: AppSpacing.sm),
-                  Text(post.author!, style: text.bodySmall),
+                  Text(shortAuthor, style: text.bodySmall),
                 ],
               ),
             ],
