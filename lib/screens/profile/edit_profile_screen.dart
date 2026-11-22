@@ -73,7 +73,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     if (value != null) _addTo(list, value);
   }
 
-  void _save() {
+  Future<void> _save() async {
     final formValid = _formKey.currentState!.validate();
     setState(() {
       _showMajorError = _majors.isEmpty;
@@ -86,6 +86,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       minors: _minors,
       skills: _skills,
     );
+
+    // Confirm the valid submission before leaving the form
+    await showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => _ProfileSavedDialog(
+        isFirstTimeSetup: widget.isFirstTimeSetup,
+      ),
+    );
+    if (!mounted) return;
 
     if (widget.isFirstTimeSetup) {
       // TODO: save the profile to the backend once it exists
@@ -221,6 +231,46 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           ),
         ),
       ),
+    );
+  }
+}
+
+// Shown after a valid Save, like the "Post published" dialog (O3).
+// Done closes it; then Edit Profile goes back to My Profile, or to Home
+// during first-time setup.
+class _ProfileSavedDialog extends StatelessWidget {
+  final bool isFirstTimeSetup;
+
+  const _ProfileSavedDialog({required this.isFirstTimeSetup});
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
+    return AlertDialog(
+      icon: CircleAvatar(
+        radius: 24,
+        backgroundColor: colors.surfaceContainerHighest,
+        child: Icon(Icons.check, color: colors.onSurface),
+      ),
+      title: Text(isFirstTimeSetup ? 'Profile set up' : 'Profile saved'),
+      content: Text(
+        isFirstTimeSetup
+            ? 'Your profile is ready. You can now browse the boards and '
+                'join groups.'
+            : 'Your changes are saved. Other students will see your '
+                'updated profile.',
+        textAlign: TextAlign.center,
+      ),
+      actions: [
+        SizedBox(
+          width: double.infinity,
+          child: FilledButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Done'),
+          ),
+        ),
+      ],
     );
   }
 }
