@@ -3,6 +3,7 @@ import 'package:sunite/models/user_profile.dart';
 import 'package:sunite/screens/profile/edit_profile_screen.dart';
 import 'package:sunite/screens/profile/widgets/profile_view.dart';
 import 'package:sunite/utils/app_spacing.dart';
+import 'package:sunite/screens/profile/my_posts_screen.dart';
 
 // 11. My Profile: the user's own profile as others see it, plus the
 // owner-only controls (Edit Profile, My Posts, Log Out)
@@ -58,8 +59,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
     if (logOut == true) {
-      // TODO: sign out and go to Login once auth and the Login screen exist
-      _comingSoon('Login screen');
+      Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
     }
   }
 
@@ -94,7 +94,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const SizedBox(width: AppSpacing.sm),
               Expanded(
                 child: OutlinedButton(
-                  onPressed: () => _comingSoon('My Posts'),
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const MyPostsScreen()),
+                  ),
                   child: const Text('My Posts'),
                 ),
               ),
